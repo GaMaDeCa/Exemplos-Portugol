@@ -3,6 +3,7 @@ Aqui vou compartilhar alguns exemplos que fiz usando [Portugol Web/Mobile](https
 Vou deixar misturado mesmo já que estou enviando pelo celular:  
 
 	Desafio Troca.por
+	Juros Simples.por
 	Media Alunos.por
 	Meu IP.por
 	Número Par.por
