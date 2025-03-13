@@ -7,4 +7,5 @@
 	Palíndromo.por
 	Quiz.por
 ### Recursos
-	[Exercícios Portugol(davidcreator)](https://github.com/davidcreator/portugol)
+ 
+ [Exercícios Portugol(davidcreator)](https://github.com/davidcreator/portugol)
