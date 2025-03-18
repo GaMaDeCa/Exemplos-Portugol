@@ -1,0 +1,287 @@
+programa
+{
+	inclua biblioteca Graficos --> g
+	inclua biblioteca Mouse --> m
+	inclua biblioteca Util --> u
+
+	//TicTacToe - Jogo da Velha
+	//Autor: https://github.com/GaMaDeCa
+	//IDE: Portugol Web
+	//Favor deixar os créditos acima.
+	// X # O
+	
+	inteiro FPS = 16
+	inteiro mX, mY
+	//Criação do tabuleiro/mapa do jogo
+	// TAB 3×3 = 9
+	inteiro TAB[9]
+	// bloco gráfico relacionado a largura e altura da tela dividido por 3
+	inteiro blocoX,blocoY
+	inteiro X = 1, O = 2
+	
+	inteiro VEZ
+	inteiro checagem, jogadas
+
+	//Funções do Jogo
+	funcao resetar(){
+		checagem = -1
+		jogadas = 0
+		VEZ = u.sorteia(X,O)
+		g.definir_titulo_janela("Vez de "+getVez())
+		//Limpa o tabuleiro
+		para(inteiro xy = 0; xy < 9; xy++){
+			TAB[xy] = 0 //Vazio
+		}
+		EMOJI_EMPATE = sorteiaEmoji(EMOJIS_EMPATE)
+		EMOJI_NORMAL = sorteiaEmoji(EMOJIS_NORMAL)
+		COR_CAIXA = 0x0000FF
+		contagem = 3
+		mX=-1
+		mY=-1
+	}
+	funcao caracter getVez(){
+		se (VEZ == X)
+			retorne 'X'
+		senao
+			retorne 'O'
+	}
+	funcao mudarVez(){
+		se(VEZ == X)
+			VEZ = O
+		senao
+			VEZ = X
+		g.definir_titulo_janela("Vez de "+getVez())
+	}
+	//Checa se uma determinada seção do vetor
+	//é igual a uma determinada variável, se
+	//todas forem iguais então é retornado verdadeiro.
+	//Exemplo:
+	// vetor = {2, 2, 2, 2}
+	// inteiro var = 2
+	// compararTodoIntervaloTAB(0,1,3,var) //retorna verdadeiro
+	funcao logico compararTodoIntervaloTAB(inteiro i, inteiro passos, inteiro fim,inteiro valor){
+		para(; i <= fim; i += passos)
+			se (TAB[i] != valor)
+				retorne falso
+		retorne verdadeiro
+	}
+	funcao inteiro verificarGanhador(){
+		jogadas += 1
+		se ( jogadas== 9)
+			retorne 0
+		se (   //Horizontal
+			compararTodoIntervaloTAB(0,1,2,VEZ)
+						ou
+			compararTodoIntervaloTAB(3,1,5,VEZ)
+						ou
+			compararTodoIntervaloTAB(6,1,8,VEZ)
+			ou //Vertical
+			compararTodoIntervaloTAB(0,3,6,VEZ)
+						ou
+			compararTodoIntervaloTAB(1,3,7,VEZ)
+						ou
+			compararTodoIntervaloTAB(2,3,8,VEZ)
+			ou //Em cruz
+			compararTodoIntervaloTAB(0,4,8,VEZ)
+						ou
+			compararTodoIntervaloTAB(2,2,6,VEZ)
+		   )
+			retorne VEZ
+		senao
+			retorne -1
+	}
+	inteiro contagem
+	funcao iniciarAnimado(){
+		//Animação de início de jogo
+		g.definir_cor(g.COR_PRETO)
+		g.desenhar_retangulo(3,meioAltura-45, largura-6, 86, verdadeiro, verdadeiro)
+		g.definir_tamanho_texto(43)
+		g.definir_cor(0xffa800) //Laranja
+		g.desenhar_texto(5, meioAltura-22, "Iniciando em "+contagem)
+		u.aguarde(1000)
+		contagem -= 1
+		se (contagem == 0)
+			resetar()
+	}
+	cadeia EMOJIS_EMPATE[]={
+		" 🫵🗿👉🥔?",
+		"👏  💩💩  👏",
+		"  🫵😭😭🫵",
+		"    🦧#️⃣🦍",
+		" 🫵2️⃣✖️🤡"
+	},	   EMOJIS_NORMAL[]={
+		" 🧙‍🪄✨",
+		"🤟😎🤏",
+		"🫵🗿🫱🍷",
+		"🧠➕🧠",
+		"   📚🐛",
+		"   🫵🦉"
+	}
+	cadeia EMOJI_EMPATE, EMOJI_NORMAL
+	funcao cadeia sorteiaEmoji(cadeia emojis[]){
+		retorne emojis[u.sorteia(0,u.numero_elementos(emojis)-1)]
+	}
+	funcao exibirResultados(){
+		se(COR_CAIXA >= 0xFF0000){
+				iniciarAnimado()
+				retorne
+		}
+		inteiro tamanho_texto = 30
+		g.definir_tamanho_texto(tamanho_texto)
+
+		g.definir_cor(COR_CAIXA)
+		g.desenhar_retangulo(0, (meioAltura) - blocoX, largura, blocoY*2, falso, verdadeiro)
+		g.definir_cor(COR_TEXTO)
+		g.desenhar_texto(meioLargura-(tamanho_texto*3), meioAltura-tamanho_texto*2-20, "Fim de Jogo!")
+		se (checagem == 0) {
+			g.definir_titulo_janela("Empate!")
+			g.desenhar_texto(meioLargura-(tamanho_texto*5)+10, meioAltura-tamanho_texto-20, "🦆Jogo Empatado🦆")
+			g.desenhar_texto(meioLargura-(tamanho_texto*3),meioAltura,EMOJI_EMPATE)
+		} senao {
+			g.definir_titulo_janela("Ganhador "+getVez()+"!")
+			g.desenhar_texto(meioLargura-(tamanho_texto*4), meioAltura-tamanho_texto-15, "🏆 "+getVez()+" Ganhou! 🏆")
+			g.desenhar_texto(meioLargura-70,meioAltura,EMOJI_NORMAL)
+		
+		}
+		g.definir_tamanho_texto(15)
+		//Truque em RGB + Matemática básica em sistemas binários
+		se(m.algum_botao_pressionado())
+		{
+			g.desenhar_texto(60, meioAltura+55, "Mantenha pressionado...")
+			COR_CAIXA += 0x080000 - 0x000008
+		}
+		senao 
+		{
+			COR_CAIXA = 0x0000FF
+			g.desenhar_texto(3,meioAltura+40,"Pressione a tela até esta caixa mudar da cor")
+			g.desenhar_texto(30,meioAltura+55,"azul para o vermelho e a mensagem")
+			g.desenhar_texto(60,meioAltura+70,"\"Iniciando em 3\" aparecer!")
+		}
+	}
+	//Funções de desenho
+	// Grade Padrão 3×3
+	funcao desenharGrade(inteiro cor)
+	{
+		g.definir_cor(cor)
+		inteiro a = 0, b = largura, c = blocoY
+		//Linhas Horizontais
+		g.desenhar_linha(a,c,b,c)
+		c += blocoY
+		g.desenhar_linha(a,c,b,c)
+		c += blocoY
+		g.desenhar_linha(a,c,b,c)
+		
+		//Linhas Verticais (|||)
+		a = 0
+		b = altura
+		c = blocoX
+		g.desenhar_linha(c,a,c,b)
+		g.desenhar_linha(c+blocoX,a,c+blocoX,b)
+		g.desenhar_linha(c+(blocoX*2),a,c+(blocoX*2),b)
+	}
+	funcao desX(inteiro pos,inteiro cor)
+	{
+		inteiro pX = pos % 3
+		inteiro pY = (pos - pX) / 3
+		pX *= blocoX
+		pY *= blocoY
+		g.definir_cor(cor)
+		g.desenhar_linha(pX,pY,pX+blocoX,pY+blocoY)
+		g.desenhar_linha(pX+blocoY,pY,pX,pY+blocoY)
+	}
+	funcao desO(inteiro pos,inteiro cor,logico preencher)
+	{
+		inteiro pX = pos % 3
+		inteiro pY = (pos - pX) / 3
+		pX *= blocoX
+		pY *= blocoY
+		g.definir_cor(cor)
+		g.desenhar_elipse(pX, pY, blocoX, blocoY, preencher)
+	}
+	
+	//Funções de Mecanismo de Jogo Simples(Simple Game Engine)
+	funcao entrada()
+	{
+		se(m.algum_botao_pressionado()){
+			mX = m.posicao_x()
+			mY = m.posicao_y()
+		}
+	}
+	funcao logica()
+	{
+		se (checagem != -1)
+			retorne
+		entrada()
+		para (inteiro y = 0; y < 3; y++) {
+			para (inteiro x = 0; x < 3; x++) {
+				inteiro bX=blocoX*x,bY=blocoY*y
+				inteiro bX2=blocoX+bX,bY2=blocoY+bY
+				//Se clicou em algum bloco do tabuleiro
+				se( (mX > bX e mX < bX2) e (mY > bY e mY < bY2) ){
+					inteiro posicao = x+(y*3)
+					//E se também estiver vazio
+					se (TAB[posicao] == 0){
+						TAB[posicao] = VEZ
+						checagem = verificarGanhador()
+						se (checagem == -1)
+							mudarVez()
+						senao {
+							exibirResultados()
+							pare
+						}
+					}
+					mX = -1
+					mY = -1
+				}
+			}
+		}
+	}
+	inteiro COR_FUNDO = g.COR_BRANCO, COR_GRADE = g.COR_PRETO,
+			COR_X = g.COR_PRETO, COR_O = g.COR_VERMELHO,
+			COR_CAIXA/* = g.COR_AZUL*/, COR_TEXTO = g.COR_AMARELO
+	funcao desenhar()
+	{
+		desenharGrade(COR_GRADE)
+		para (inteiro y = 0; y < 3; y++)
+		{
+			para (inteiro x = 0; x < 3; x++)
+			{
+				inteiro posicao = x+(y*3)
+				//Sem uso de imagens, apenas pura programação generativa
+				se (TAB[posicao] == X)
+					desX(posicao,COR_X)
+				se (TAB[posicao] == O)
+					desO(posicao,COR_O, falso)
+			}
+		}
+		se (checagem != -1)
+			exibirResultados()
+	}
+	inteiro largura = 300, altura = 300
+	inteiro meioLargura = largura / 2, meioAltura = altura / 2
+	//Confuiguração Inicial
+	funcao AoIniciar(){
+		g.iniciar_modo_grafico(falso)
+		g.definir_dimensoes_janela(largura, altura)
+		blocoX = largura / 3
+		blocoY = altura / 3
+		
+		resetar()
+	}
+	funcao inicio()
+	{
+		AoIniciar()
+		enquanto(verdadeiro)
+		{
+			g.definir_cor(COR_FUNDO)
+			g.limpar()
+			
+			//entrada() // = controle do jogo(joypad, mouse, teclado, etc)
+			logica()
+			desenhar()
+			
+			g.renderizar()
+			u.aguarde(FPS)
+		}
+	}
+}
