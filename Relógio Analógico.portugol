@@ -1,0 +1,174 @@
+programa
+{
+	inclua biblioteca Calendario --> c
+	inclua biblioteca Graficos --> g
+	inclua biblioteca Matematica --> m
+	inclua biblioteca Util --> u
+	// Relógio Analógico
+	const inteiro LARGURA = 350, ALTURA = 350
+	const inteiro RAIO =  (LARGURA + ALTURA) / 4
+	const inteiro tamanho_texto = RAIO / 10
+	const inteiro t2 = tamanho_texto / 2
+	inteiro sx, sy,
+			mx, my,
+			hx, hy,
+			x = LARGURA / 2, y = ALTURA / 2 //x e y centrais(no meio da tela)
+	
+	funcao real cos(real n){retorne m.cosseno(n)}
+	funcao real sen(real n){retorne m.seno(n)}
+	const real PI2 = m.PI / 2
+	
+	inteiro COR_FUNDO = g.COR_BRANCO,
+			COR_RELOGIO_FUNDO = g.COR_BRANCO,
+			COR_RELOGIO = g.COR_PRETO,
+			COR_RELOGIO_CENTRO = g.COR_PRETO,
+			// Cores dos ponteiros(segundos, minutos e horas)
+			COR_PONT_SEG = g.COR_VERMELHO,COR_PONT_MIN = g.COR_PRETO, COR_PONT_HOR = g.COR_PRETO
+	inteiro CORES_TEXTO[]
+	inteiro
+	TEXTO_COLORIDO[] = {
+		0xFF0000,
+		0xffff00,
+		0x00FF00,
+		0x00ffff,
+		0x0000FF,
+		0xff00ff
+	},
+	TEXTO_ESCURO[] = {
+		g.COR_PRETO
+	},
+	TEXTO_CLARO[] = {
+		g.COR_BRANCO
+	}
+	funcao tema_claro(){
+		COR_FUNDO = 0xFFFFFF
+		COR_RELOGIO_FUNDO = COR_FUNDO
+		COR_RELOGIO = 0x000000
+		COR_RELOGIO_CENTRO = COR_RELOGIO
+		COR_PONT_SEG = 0xFF0000
+		COR_PONT_MIN = COR_RELOGIO
+		COR_PONT_HOR = COR_RELOGIO
+		CORES_TEXTO = TEXTO_ESCURO
+	}
+	funcao tema_escuro(){
+		COR_FUNDO = 0x000000
+		COR_RELOGIO_FUNDO = 0x000000
+		COR_RELOGIO = 0xFFFFFF
+		COR_RELOGIO_CENTRO = 0xffffff
+		COR_PONT_SEG = 0xFF0000
+		COR_PONT_MIN = COR_RELOGIO
+		COR_PONT_HOR = COR_RELOGIO
+		CORES_TEXTO = TEXTO_CLARO
+	}
+	funcao tema_colorido(){
+		COR_FUNDO = 0x330000 //VERMELHO ESCURO
+		COR_RELOGIO_FUNDO = 0x000000
+		COR_RELOGIO = 0x00ff00
+		COR_RELOGIO_CENTRO = 0x00ff00
+		COR_PONT_SEG = 0xFF0000 //VERMELHO CLARO
+		COR_PONT_MIN = 0x00ff00
+		COR_PONT_HOR = 0x0000ff
+		CORES_TEXTO = TEXTO_COLORIDO
+	}
+	funcao calcular_ponteiros(inteiro h, inteiro m, inteiro s)
+	{
+		sx = (cos(s * 3.14f / 30 - PI2) * (RAIO/1.1) + x)
+		sy = (sen(s * 3.14f / 30 - PI2) * (RAIO/1.1) + y)
+		mx = (cos(m * 3.14f / 30 - PI2) * (RAIO/1.2) + x)
+		my = (sen(m * 3.14f / 30 - PI2) * (RAIO/1.2) + y)
+		hx = (cos((h * 30 + m / 2) * 3.14f / 180 - PI2) * (RAIO/1.5) + x)
+		hy = (sen((h * 30 + m / 2) * 3.14f / 180 - PI2) * (RAIO/1.5) + y)
+	}
+	// Desenha os ponteiros com base no x e y centrais(centro do relógio) e
+	// tx e ty como ponta do ponteiro(pode ser s,m ou h).
+	// É desenhado +2× para os ponteiros de minutos e horas +4×
+	// para aumentar a grossura da linha manualmente.
+	funcao desenhar_ponteiros(){
+		g.definir_cor(COR_PONT_SEG)
+		g.desenhar_linha(x,y,sx,sy)
+		g.desenhar_elipse(sx-3,sy-3,6,6,verdadeiro)
+		
+		g.definir_cor(COR_PONT_MIN)
+		g.desenhar_linha(x+1,y,mx+1,my)
+		g.desenhar_linha(x,y,mx,my)
+		g.desenhar_elipse(mx-4,my-4,8,8,verdadeiro)
+		g.desenhar_linha(x-1,y,mx-1,my)
+		
+		g.definir_cor(COR_PONT_HOR)
+		g.desenhar_linha(x-2,y,hx-2,hy)
+		g.desenhar_linha(x-1,y,hx-1,hy)
+		g.desenhar_linha(x,y,hx,hy)
+		g.desenhar_elipse(hx-5,hy-5,10,10,verdadeiro)
+		g.desenhar_linha(x+1,y,hx+1,hy)
+		g.desenhar_linha(x+2,y,hx+2,hy)
+	}
+	funcao desenhar_info(){
+		inteiro tX, tY
+		inteiro t = tamanho_texto / 2
+		para(inteiro d = 1; d <= 12; d++){
+			g.definir_cor(CORES_TEXTO[(d-1)%u.numero_elementos(CORES_TEXTO)])
+			tX = cos((d * 30) * 3.14f / 180 - PI2)*(RAIO/1.1)
+			tY = sen((d * 30) * 3.14f / 180 - PI2)*(RAIO/1.1)
+			g.desenhar_texto(-t+tX+x,tY+y-t,""+d)
+		}
+	}
+	inteiro horas,minutos,segundos
+	cadeia titulo
+	funcao inicio()
+	{
+		g.iniciar_modo_grafico(falso)
+		g.definir_dimensoes_janela(LARGURA, ALTURA)
+		g.definir_tamanho_texto(tamanho_texto)
+		escolha(u.sorteia(1,3)){
+			caso 1:
+				tema_colorido()
+				pare
+			caso 2:
+				tema_claro()
+				pare
+			caso 3:
+				tema_escuro()
+				pare
+		}
+		enquanto(verdadeiro)
+		{
+			g.definir_cor(COR_FUNDO)
+			g.limpar()
+			g.definir_cor(COR_RELOGIO_FUNDO)
+			g.desenhar_elipse(0, 0, LARGURA, ALTURA, verdadeiro)
+			
+			horas = c.hora_atual(falso)
+			minutos = c.minuto_atual()
+			segundos = c.segundo_atual()
+			titulo = "Relógio Analógico → "
+			se (horas < 10)
+				titulo += "0"
+			titulo += horas + ":"
+			se (minutos < 10)
+				titulo += "0"
+			titulo += minutos + ":"
+			se (segundos < 10)
+				titulo += "0"
+			titulo += segundos
+			
+			desenhar_info()
+			
+			calcular_ponteiros(
+				horas,
+				minutos,
+				segundos
+			)
+			desenhar_ponteiros()
+			
+			g.definir_cor(COR_RELOGIO_CENTRO)
+			g.desenhar_elipse(x-t2,y-t2,tamanho_texto,tamanho_texto,verdadeiro)
+			
+			g.definir_cor(COR_RELOGIO)
+			g.desenhar_elipse(0, 0, LARGURA, ALTURA, falso)
+			
+			g.renderizar()
+			g.definir_titulo_janela(titulo)
+			u.aguarde(1000)
+		}
+	}
+}
