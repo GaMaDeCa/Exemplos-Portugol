@@ -30,7 +30,7 @@ Vou deixar misturado mesmo já que estou enviando pelo celular:
     Verificar Site Online.por
     Órbita.por
 
-Eu dou a permissão para usarem todos os exemplos acima em projetos de qualquer pessoa sem custos envolvidos, desejo que esse repositório sirva de guia para o aprendizado, gostaria de compartilhar esses códigos exemplos para o uso do app Portugol Web/Mobile de Erick Weil mas ainda não sei como funciona esse sistema, obrigado pela visita 👍
+Podem usar todos os exemplos acima em projetos de qualquer pessoa sem custos envolvidos, desejo que esse repositório sirva de guia para o aprendizado, gostaria de compartilhar esses códigos exemplos para o uso do app Portugol Web/Mobile de Erick Weil mas ainda não sei como funciona esse sistema, obrigado pela visita 👍
 ### Repositórios
  
  [Exercícios Portugol(David L. Almeida)](https://github.com/davidcreator/portugol)
